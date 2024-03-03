@@ -1,0 +1,73 @@
+import express from "express";
+import bodyParser from "body-parser";
+import axios from "axios";
+
+const port = 3000;
+const app = express();
+const baseURL = "https://secrets-api.appbrewery.com/";
+const yourBearerToken = "18426869-a230-4723-bc90-8ebd5a0b80a4";
+const config = {
+  headers: { Authorization: `Bearer ${yourBearerToken}` },
+};
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+  res.render("index.ejs", {
+    content: "Interact for data",
+  });
+});
+
+app.post("/get-secret", async (req, res) => {
+  const searchId = req.body.id;
+  try {
+    const result = await axios.get(baseURL + "secrets/" + searchId, config);
+    res.render("index.ejs", { content: JSON.stringify(result.data) });
+  } catch (error) {
+    res.render("index.ejs", { content: JSON.stringify(error.response.data) });
+  }
+});
+
+app.post("/post-secret", async (req, res) => {
+  try {
+    const result = await axios.post(baseURL + "secrets/", req.body, config);
+    res.render("index.ejs", { content: JSON.stringify(result.data) });
+  } catch (error) {
+    res.render("index.ejs", {content: JSON.stringify(error.response.data) });
+  }
+});
+
+app.post("/put-secret", async (req, res) => {
+  const searchId = req.body.id;
+  try {  
+    const result = await axios.put(baseURL + "secrets/" + searchId, req.body, config);
+    res.render("index.ejs", { content: JSON.stringify(result.data) });
+  } catch (error) {
+    res.render("index.ejs", { content: JSON.stringify(error.response.data) });
+  }
+});
+
+app.post("/patch-secret", async (req, res) => {
+  const searchId = req.body.id;
+  try {  
+    const result = await axios.patch(baseURL + "secrets/" + searchId, req.body, config);
+    res.render("index.ejs", { content: JSON.stringify(result.data) });
+  } catch (error) {
+    res.render("index.ejs", { content: JSON.stringify(error.response.data) });
+  }
+});
+
+app.post("/delete-secret", async (req, res) => {
+  const searchId = req.body.id;
+  try {
+    const result = await axios.delete(baseURL + "secrets/" + searchId, config);
+    res.render("index.ejs", { content: JSON.stringify(result.data) });
+  } catch (error) {
+    res.render("index.ejs", { content: JSON.stringify(error.response.data) });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Listening from port ${port}`);
+});
+
